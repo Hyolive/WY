@@ -93,14 +93,14 @@ const Story: React.FC<StoryProps> = ({ onBack }) => {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] ease-out"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  // Fallback to a placeholder if the local file is missing
-                  target.src = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1000';
+                  // Si l'image locale n'est pas trouvée, on met un placeholder visuel joli
+                  target.src = 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1000';
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent opacity-80"></div>
               <div className="absolute top-6 left-6 flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-[10px] font-bold tracking-widest uppercase">Fichier: {currentSlide.imageUrl.replace('./', '')}</span>
+                <div className="w-2 h-2 rounded-full bg-pink-400 animate-pulse"></div>
+                <span className="text-[10px] font-bold tracking-widest uppercase">Archive: {currentSlide.imageUrl.replace('/', '')}</span>
               </div>
             </div>
           </div>
