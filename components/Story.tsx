@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Home as HomeIcon, Ghost, Zap, Heart, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Home as HomeIcon, Ghost, Zap, Heart, Star, AlertCircle } from 'lucide-react';
 import { STORY_DATA } from '../constants';
 
 interface StoryProps {
@@ -10,12 +10,14 @@ interface StoryProps {
 const Story: React.FC<StoryProps> = ({ onBack }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const currentSlide = STORY_DATA[currentIndex];
 
   const handleNext = () => {
     if (currentIndex < STORY_DATA.length - 1) {
       setIsAnimating(true);
+      setImageError(false);
       setTimeout(() => {
         setCurrentIndex(prev => prev + 1);
         setIsAnimating(false);
@@ -26,6 +28,7 @@ const Story: React.FC<StoryProps> = ({ onBack }) => {
   const handlePrev = () => {
     if (currentIndex > 0) {
       setIsAnimating(true);
+      setImageError(false);
       setTimeout(() => {
         setCurrentIndex(prev => prev - 1);
         setIsAnimating(false);
@@ -86,21 +89,25 @@ const Story: React.FC<StoryProps> = ({ onBack }) => {
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-pink-600/30 via-purple-600/30 to-blue-600/30 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
             
-            <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/20 bg-slate-800">
-              <img 
-                src={currentSlide.imageUrl} 
-                alt={currentSlide.title}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] ease-out"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  // Si l'image locale n'est pas trouvée, on met un placeholder visuel joli
-                  target.src = 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=1000';
-                }}
-              />
+            <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/20 bg-slate-800 flex items-center justify-center">
+              {!imageError ? (
+                <img 
+                  src={currentSlide.imageUrl} 
+                  alt={currentSlide.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2000ms] ease-out"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
+                  <AlertCircle size={48} className="text-pink-500 animate-bounce" />
+                  <p className="text-pink-200 font-medium">Image non trouvée :<br/><span className="text-white font-mono text-sm">{currentSlide.imageUrl}</span></p>
+                  <p className="text-xs text-white/40">Vérifie qu'elle est bien dans le dossier <b>public</b></p>
+                </div>
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent opacity-80"></div>
               <div className="absolute top-6 left-6 flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-                <div className="w-2 h-2 rounded-full bg-pink-400 animate-pulse"></div>
-                <span className="text-[10px] font-bold tracking-widest uppercase">Archive: {currentSlide.imageUrl.replace('/', '')}</span>
+                <div className={`w-2 h-2 rounded-full ${imageError ? 'bg-red-400' : 'bg-green-400'} animate-pulse`}></div>
+                <span className="text-[10px] font-bold tracking-widest uppercase">Source: {currentSlide.imageUrl}</span>
               </div>
             </div>
           </div>
